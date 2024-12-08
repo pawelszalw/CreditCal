@@ -1,0 +1,48 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Overpayment Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Overpayment Details</h1>
+
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Detail</th>
+                <th scope="col">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Remaining Loan Term (Months)</td>
+                <td>{{ remaining_term }}</td>
+            </tr>
+            <tr>
+                <td>Current Monthly Installment</td>
+                <td>{{ credit.current_expected_loan_rate }} PLN</td>
+            </tr>
+            <tr>
+                <td>Total Interest Paid</td>
+                <td>{{ credit.total_interest_payed }} PLN</td>
+            </tr>
+            <tr>
+                <td>Total Principal Paid</td>
+                <td>{{ credit.total_principal_payed }} PLN</td>
+            </tr>
+            <tr>
+                <td>Total Penalty Paid</td>
+                <td>{{ credit.total_penalty_payed }} PLN</td>
+            </tr>
+            <tr>
+                <td>Total Paid (Principal + Interest + Penalties)</td>
+                <td>{{ credit.total_payed }} PLN</td>
+            </tr>
+            <tr>
+                <td>Remaining Principal</td>
+                <td>{{ credit.principal }} PLN</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

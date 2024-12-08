@@ -1,0 +1,91 @@
+{% extends 'calculator/base.html' %}
+
+{% block title %}Credit Calculator{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Credit Calculator</h1>
+    <form method="post" class="p-4 border rounded bg-light shadow mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="principal" class="form-label">Loan Amount (Principal)</label>
+            <input type="number" id="principal" name="principal" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="term" class="form-label">Loan Term (Months)</label>
+            <input type="number" id="term" name="term" class="form-control" required>
+        </div>
+        <!-- Current Interest Rate -->
+        <div id="current_interest_rate_section">
+            <label for="current_interest_rate" class="form-label">Current Interest Rate (%)</label>
+            <input type="number" id="current_interest_rate" name="current_interest_rate" class="form-control" step="0.01">
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="use_separate_rates" name="use_separate_rates" onclick="toggleInterestFields()">
+            <label class="form-check-label" for="use_separate_rates">
+                Enter Bank Margin and Base Interest Rate Separately
+            </label>
+        </div>
+        <!-- Separate Bank Margin and Base Interest Rate -->
+        <div id="separate_rates_section" style="display: none;">
+            <div class="mb-3">
+                <label for="bank_margin" class="form-label">Bank Margin (%)</label>
+                <input type="number" id="bank_margin" name="bank_margin" class="form-control" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label for="base_interest_rate" class="form-label">Base Interest Rate (%)</label>
+                <input type="number" id="base_interest_rate" name="base_interest_rate" class="form-control" step="0.01">
+            </div>
+        </div>
+        <!-- Penalty Details -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="add_penalty_details" name="add_penalty_details" onclick="togglePenaltyFields()">
+            <label class="form-check-label" for="add_penalty_details">
+                My bank charges a penalty for overpayment
+            </label>
+        </div>
+        <div id="penalty_fields_section" style="display: none;">
+            <div class="mb-3">
+                <label for="penalty_rate" class="form-label">Penalty Rate (%) (Optional)</label>
+                <input type="number" id="penalty_rate" name="penalty_rate" class="form-control" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label for="penalty_start_date" class="form-label">Penalty Start Date</label>
+                <input type="date" id="penalty_start_date" name="penalty_start_date" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="penalty_end_date" class="form-label">Penalty End Date</label>
+                <input type="date" id="penalty_end_date" name="penalty_end_date" class="form-control">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Calculate</button>
+    </form>
+</div>
+
+<script>
+    function toggleInterestFields() {
+        const useSeparateRates = document.getElementById('use_separate_rates').checked;
+        const currentRateSection = document.getElementById('current_interest_rate_section');
+        const separateRatesSection = document.getElementById('separate_rates_section');
+
+        if (useSeparateRates) {
+            currentRateSection.style.display = 'none';
+            separateRatesSection.style.display = 'block';
+        } else {
+            currentRateSection.style.display = 'block';
+            separateRatesSection.style.display = 'none';
+        }
+    }
+
+    function togglePenaltyFields() {
+        const addPenaltyDetails = document.getElementById('add_penalty_details').checked;
+        const penaltyFieldsSection = document.getElementById('penalty_fields_section');
+
+        if (addPenaltyDetails) {
+            penaltyFieldsSection.style.display = 'block';
+        } else {
+            penaltyFieldsSection.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}
