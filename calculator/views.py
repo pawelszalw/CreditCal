@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .credit_logic import CreditDetails
+from .models.credit_details import CreditDetails
 from datetime import datetime
 
 
@@ -72,7 +72,7 @@ def overpayment(request):
 
     # Initialize the loan object
     credit = CreditDetails(
-        principal=principal,
+        initial_principal=principal,  # TODO modify in HTML
         term=term,
         bank_margin=bank_margin,
         base_interest_rate=base_interest_rate,
