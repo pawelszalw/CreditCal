@@ -6,6 +6,7 @@
 <div class="container mt-5">
     <h1 class="text-center">Overpayment Details</h1>
 
+    <!-- Loan Parameters Table -->
     <table class="table table-bordered table-striped mt-4">
         <thead class="table-dark">
             <tr>
@@ -24,19 +25,19 @@
             </tr>
             <tr>
                 <td>Total Interest Paid</td>
-                <td>{{ credit.total_interest_payed }} PLN</td>
+                <td>{{ credit.total_interest_paid }} PLN</td>
             </tr>
             <tr>
                 <td>Total Principal Paid</td>
-                <td>{{ credit.total_principal_payed }} PLN</td>
+                <td>{{ credit.total_principal_paid }} PLN</td>
             </tr>
             <tr>
                 <td>Total Penalty Paid</td>
-                <td>{{ credit.total_penalty_payed }} PLN</td>
+                <td>{{ credit.total_penalty_paid }} PLN</td>
             </tr>
             <tr>
                 <td>Total Paid (Principal + Interest + Penalties)</td>
-                <td>{{ credit.total_payed }} PLN</td>
+                <td>{{ credit.total_paid }} PLN</td>
             </tr>
             <tr>
                 <td>Remaining Principal</td>
@@ -44,5 +45,68 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- Overpayment Slider -->
+    <div class="mt-4">
+        <label for="overpayment_slider" class="form-label">Overpayment Amount</label>
+        <input
+            type="range"
+            class="form-range"
+            id="overpayment_slider"
+            min="{{ credit.current_expected_loan_rate }}"
+            max="{{ credit.principal }}"
+            step="100"
+            value="{{ credit.current_expected_loan_rate }}"
+            oninput="updateOverpaymentValue(this.value)"
+        >
+        <p>Overpayment: <span id="overpayment_value">{{ credit.current_expected_loan_rate }}</span> PLN</p>
+    </div>
+
+    <!-- Detailed Payment Table -->
+    <h2 class="mt-5">Payment Breakdown</h2>
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Month</th>
+                <th scope="col">Payment Date</th>
+                <th scope="col">Installment (Total)</th>
+                <th scope="col">Interest</th>
+                <th scope="col">Principal</th>
+                <th scope="col">Overpayment</th>
+                <th scope="col">Remaining Principal</th>
+                <th scope="col">Cumulative Interest Paid</th>
+                <th scope="col">Savings from Overpayment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payment_schedule %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ payment.date }}</td>
+                <td>{{ payment.total_payment }} PLN</td>
+                <td>{{ payment.interest }} PLN</td>
+                <td>{{ payment.principal }} PLN</td>
+                <td>
+                    <input
+                        type="number"
+                        class="form-control"
+                        min="0"
+                        max="{{ credit.principal }}"
+                        value="{{ payment.overpayment }}"
+                    >
+                </td>
+                <td>{{ payment.remaining_principal }} PLN</td>
+                <td>{{ payment.cumulative_interest_paid }} PLN</td>
+                <td>{{ payment.savings }} PLN</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+
+<script>
+    function updateOverpaymentValue(value) {
+        document.getElementById('overpayment_value').innerText = value;
+    }
+</script>
 {% endblock %}

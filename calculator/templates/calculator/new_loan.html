@@ -15,18 +15,36 @@
             <label for="term" class="form-label">Loan Term (Months)</label>
             <input type="number" id="term" name="term" class="form-control" required>
         </div>
+
+        <!-- Interest Rate Type Dropdown -->
+        <div class="mb-3">
+            <label for="interest_rate_type" class="form-label">Interest Rate Type</label>
+            <select id="interest_rate_type" name="interest_rate_type" class="form-select" onchange="handleInterestRateType()" required>
+                <option value="constant" selected>Fixed Rate</option>
+                <option value="wibor_1m">WIBOR 1M</option>
+                <option value="wibor_3m">WIBOR 3M</option>
+                <option value="wibor_6m">WIBOR 6M</option>
+            </select>
+        </div>
+
+        <!-- Dynamic Prompt -->
+        <div id="interest_rate_prompt" class="mb-2 text-danger" style="display: none;">
+            The current WIBOR/WIRON rate will be retrieved from external servers automatically.
+        </div>
+
         <!-- Current Interest Rate -->
         <div id="current_interest_rate_section">
             <label for="current_interest_rate" class="form-label">Current Interest Rate (%)</label>
             <input type="number" id="current_interest_rate" name="current_interest_rate" class="form-control" step="0.01">
         </div>
+
+        <!-- Separate Bank Margin and Base Interest Rate -->
         <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="use_separate_rates" name="use_separate_rates" onclick="toggleInterestFields()">
             <label class="form-check-label" for="use_separate_rates">
                 Enter Bank Margin and Base Interest Rate Separately
             </label>
         </div>
-        <!-- Separate Bank Margin and Base Interest Rate -->
         <div id="separate_rates_section" style="display: none;">
             <div class="mb-3">
                 <label for="bank_margin" class="form-label">Bank Margin (%)</label>
@@ -37,6 +55,16 @@
                 <input type="number" id="base_interest_rate" name="base_interest_rate" class="form-control" step="0.01">
             </div>
         </div>
+
+        <!-- Loan Type Slider -->
+        <div class="mb-3">
+            <label for="loan_type" class="form-label">Loan Type</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="loan_type" name="loan_type">
+                <label class="form-check-label" for="loan_type">Fixed Installments / Variable Installments</label>
+            </div>
+        </div>
+
         <!-- Penalty Details -->
         <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" id="add_penalty_details" name="add_penalty_details" onclick="togglePenaltyFields()">
@@ -58,6 +86,7 @@
                 <input type="date" id="penalty_end_date" name="penalty_end_date" class="form-control">
             </div>
         </div>
+
         <button type="submit" class="btn btn-primary w-100">Calculate</button>
     </form>
 </div>
@@ -65,14 +94,11 @@
 <script>
     function toggleInterestFields() {
         const useSeparateRates = document.getElementById('use_separate_rates').checked;
-        const currentRateSection = document.getElementById('current_interest_rate_section');
         const separateRatesSection = document.getElementById('separate_rates_section');
 
         if (useSeparateRates) {
-            currentRateSection.style.display = 'none';
             separateRatesSection.style.display = 'block';
         } else {
-            currentRateSection.style.display = 'block';
             separateRatesSection.style.display = 'none';
         }
     }
@@ -87,5 +113,33 @@
             penaltyFieldsSection.style.display = 'none';
         }
     }
+
+    function handleInterestRateType() {
+        const interestRateType = document.getElementById('interest_rate_type').value;
+        const useSeparateRates = document.getElementById('use_separate_rates');
+        const currentInterestRateInput = document.getElementById('current_interest_rate');
+        const interestRatePrompt = document.getElementById('interest_rate_prompt');
+        const baseInterestRateInput = document.getElementById('base_interest_rate');
+
+        if (interestRateType === 'constant') {
+            useSeparateRates.disabled = false;
+            currentInterestRateInput.disabled = false;
+            baseInterestRateInput.disabled = false;
+            interestRatePrompt.style.display = 'none';
+        } else {
+            useSeparateRates.checked = true;
+            useSeparateRates.disabled = true;
+            currentInterestRateInput.disabled = true;
+            baseInterestRateInput.disabled = true;
+            interestRatePrompt.style.display = 'block';
+        }
+
+        toggleInterestFields();
+    }
+
+    // Ensure proper default state on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        handleInterestRateType();
+    });
 </script>
 {% endblock %}
